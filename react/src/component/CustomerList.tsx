@@ -7,11 +7,18 @@ interface CustomerListProps {
   list: Customer[];
 }
 
+const customerDefault: Customer = {
+    uid: -1,
+    name: "",
+    email: "",
+    password: ""
+};
+
 const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
-    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | null>(null);
+    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>();
 
     const handleSelectCustomer = (customer: Customer) => {
-        setSelectedCustomer(prev => (prev?.uid === customer.uid ? null : customer));
+        setSelectedCustomer(prev => (prev?.uid === customer.uid ? customerDefault : customer));
     };
     return (
         <>
@@ -44,9 +51,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </tbody>
             </table>
         </div>
-        {selectedCustomer !== null && (
-            <CustomerRecord customer={selectedCustomer} />
-        )}
+        <CustomerRecord customer={selectedCustomer ?? customerDefault} />
 </>
     );
 };

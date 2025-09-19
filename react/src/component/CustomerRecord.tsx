@@ -8,6 +8,8 @@ interface CustomerRecordProps {
 
 const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
+    const isNewCustomer = customer.uid === -1;  
+    const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
 
     useEffect(() => {
         setFormObject(customer);
@@ -35,8 +37,7 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     return (
         <div>
             <h2>Customer Record</h2>
-            <button className="btn-add">Add</button>
-            <button className="btn-update">Update</button>
+            <h3>{title}</h3>
             <div>
                 <input type="text" name={"name"} value={formObject.name} placeholder="Name" onChange={(e) => changeHandler(e)} />
                 <input type="email" name={"email"} value={formObject.email} placeholder="Email" onChange={(e) => changeHandler(e)} />
@@ -65,7 +66,8 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
                     </button>
                 </div>
                 <div>
-                    <input className="btn-delete" type="button" value="delete" onClick={() => deleteSelected()} />
+                    {!isNewCustomer ? <input className="btn-delete" type="button" value="delete" onClick={() => deleteSelected()} /> : null}
+                    
                     <input className="btn-save" type="button" value="save" onClick={() => saveSelected()} />
                     <input className="btn-cancel" type="button" value="cancel" onClick={() => cancelSelected()} />
                 </div>
