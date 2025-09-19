@@ -1,14 +1,14 @@
-
 import React, { useState, useEffect } from "react";
 import type { Customer } from "../types/Customer";
 
 interface CustomerRecordProps {
     customer: Customer;
+    onDelete: (id: number) => void;
 }
 
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
-    const isNewCustomer = customer.id === -1;  
+    const isNewCustomer = customer.id === -1;
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
 
     useEffect(() => {
@@ -16,15 +16,17 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     }, [customer]);
     const [showPassword, setShowPassword] = useState(false);
 
-    const changeHandler = function (event: any) {
+    const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
-    setFormObject({ ...formObject, [name]: value });
-    }
+        setFormObject({ ...formObject, [name]: value });
+    };
 
+    //Delete selected customer.
     const deleteSelected = () => {
-        console.log("deleteSelected")
-    }
+        onDelete(customer.id);
+        console.log("deleteSelected");
+    };
 
     const saveSelected = () => {
         console.log("saveSelected")
