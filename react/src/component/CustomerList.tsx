@@ -1,4 +1,6 @@
 import React from "react";
+import type { Customer } from "../types/Customer";
+import CustomerRecord from './CustomerRecord'
 import * as memdb from '../../memory/memdb';
 
 const CustomerList: React.FC = () => {
@@ -13,11 +15,26 @@ const CustomerList: React.FC = () => {
         fetchData();
     }, []);
 
-    const handleSelectCustomer = (id: number) => {
-        setSelectedCustomer(prev => (prev === id ? null : id));
-    };
+interface CustomerListProps {
+  list: Customer[];
+}
 
+const customerDefault: Customer = {
+    uid: -1,
+    name: "",
+    email: "",
+    password: ""
+};
+
+const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
+    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>();
+
+    const handleSelectCustomer = (customer: Customer) => {
+        setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
+    };
+  
     return (
+        <>
         <div>
             <h2>Customer List</h2>
             <table>
@@ -52,6 +69,8 @@ const CustomerList: React.FC = () => {
                 </tbody>
             </table>
         </div>
+        <CustomerRecord customer={selectedCustomer ?? customerDefault} />
+</>
     );
 };
 
