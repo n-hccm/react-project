@@ -63,7 +63,10 @@ const CustomerList: React.FC = () => {
                 </tbody>
             </table>
         </div>
-        <CustomerRecord customer={selectedCustomer ?? customerDefault} />
+        <CustomerRecord
+            customer={selectedCustomer ?? customerDefault}
+            onCancel={() => setSelectedCustomer(customerDefault)}
+        />
 </>
 );
 };

@@ -4,9 +4,17 @@ import type { Customer } from "../types/Customer";
 
 interface CustomerRecordProps {
     customer: Customer;
+    onCancel?: () => void;
 }
 
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
+const defaultCustomer: Customer = {
+    id: -1,
+    name: '',
+    email: '',
+    password: ''
+};
+
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onCancel }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
     const isNewCustomer = customer.id === -1;  
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
@@ -31,7 +39,8 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     }
 
     const cancelSelected = () => {
-        console.log("cancelSelected")
+        setFormObject(defaultCustomer);
+        if (onCancel) onCancel();
     }
 
     return (
