@@ -1,18 +1,13 @@
 
+
 import React from "react";
+import type { Customer } from "../types/Customer";
 
+interface CustomerListProps {
+  list: Customer[];
+}
 
-//create a basic example list of customer records.
-//Style: name, email, password
-
-const staticData = [
-    {name: "John Doe", email: "jdoe@example.com", password: "password123"},
-    {name: "Jane Smith", email: "janesmith@example.com",password: "mypassword"},
-    {name: "Alice Johnson", email: "aj@example.com", password: "alice2024"}
-]
-
-//This component will display the list of customers in a table format.
-const CustomerList: React.FC = () => {
+const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
     return (
         <div>
             <h2>Customer List</h2>
@@ -25,7 +20,7 @@ const CustomerList: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {staticData.map((customer, index) => (
+                    {list.map((customer, index) => (
                         <tr key={index}>
                             <td>{customer.name}</td>
                             <td>{customer.email}</td>
