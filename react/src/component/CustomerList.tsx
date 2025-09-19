@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import type { Customer } from "../types/Customer";
 
@@ -8,25 +6,38 @@ interface CustomerListProps {
 }
 
 const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
+    const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
+
+    const handleSelectCustomer = (uid: number) => {
+        setSelectedCustomer(prev => (prev === uid ? null : uid));
+    };
     return (
         <div>
             <h2>Customer List</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                    </tr>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {list.map((customer, index) => (
-                        <tr key={index}>
-                            <td>{customer.name}</td>
-                            <td>{customer.email}</td>
-                            <td>{customer.password}</td>
-                        </tr>
-                    ))}
+                {list.map((customer) => (
+                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
+                        <td>
+                            <input
+                                type="checkbox"
+                                checked={selectedCustomer === customer.uid}
+                                onChange={() => handleSelectCustomer(customer.uid)}
+                            />
+                        </td>
+                        <td>{customer.name}</td>
+                        <td>{customer.email}</td>
+                        <td>{customer.password}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>
