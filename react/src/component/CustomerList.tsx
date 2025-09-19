@@ -8,10 +8,10 @@ interface CustomerListProps {
 }
 
 const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
-    const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
+    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | null>(null);
 
-    const handleSelectCustomer = (uid: number) => {
-        setSelectedCustomer(prev => (prev === uid ? null : uid));
+    const handleSelectCustomer = (customer: Customer) => {
+        setSelectedCustomer(prev => (prev?.uid === customer.uid ? null : customer));
     };
     return (
         <>
@@ -28,12 +28,12 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </thead>
                 <tbody>
                 {list.map((customer) => (
-                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
+                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer?.uid === customer.uid ? "bold" : "normal" }}>
                         <td>
                             <input
                                 type="checkbox"
-                                checked={selectedCustomer === customer.uid}
-                                onChange={() => handleSelectCustomer(customer.uid)}
+                                checked={selectedCustomer?.uid === customer.uid}
+                                onChange={() => handleSelectCustomer(customer)}
                             />
                         </td>
                         <td>{customer.name}</td>
@@ -45,7 +45,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
             </table>
         </div>
         {selectedCustomer !== null && (
-            <CustomerRecord customer={list.find(c => c.uid === selectedCustomer)!} />
+            <CustomerRecord customer={selectedCustomer} />
         )}
 </>
     );

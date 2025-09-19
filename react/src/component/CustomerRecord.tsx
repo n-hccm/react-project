@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Customer } from "../types/Customer";
 
 interface CustomerRecordProps {
@@ -8,6 +8,10 @@ interface CustomerRecordProps {
 
 const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
+
+    useEffect(() => {
+        setFormObject(customer);
+    }, [customer]);
     const [showPassword, setShowPassword] = useState(false);
 
     const changeHandler = function (event: any) {
