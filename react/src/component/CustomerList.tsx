@@ -1,7 +1,19 @@
 import React from "react";
 import type { Customer } from "../types/Customer";
 import CustomerRecord from './CustomerRecord'
+import * as memdb from '../../memory/memdb';
 
+const CustomerList: React.FC = () => {
+    const [data, setData] = React.useState<any[]>([]);
+    const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
+
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const result = await memdb.getAll();
+            setData(result);
+        };
+        fetchData();
+    }, []);
 
 interface CustomerListProps {
   list: Customer[];
@@ -18,8 +30,9 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>();
 
     const handleSelectCustomer = (customer: Customer) => {
-        setSelectedCustomer(prev => (prev?.uid === customer.uid ? customerDefault : customer));
+        setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
     };
+  
     return (
         <>
         <div>
@@ -34,13 +47,18 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </tr>
                 </thead>
                 <tbody>
-                {list.map((customer) => (
-                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer?.uid === customer.uid ? "bold" : "normal" }}>
+                {data.map((customer) => (
+                    <tr
+                        key={customer.id}
+                        style={{
+                            fontWeight: selectedCustomer === customer.id ? "bold" : "normal"
+                        }}
+                    >
                         <td>
                             <input
                                 type="checkbox"
-                                checked={selectedCustomer?.uid === customer.uid}
-                                onChange={() => handleSelectCustomer(customer)}
+                                checked={selectedCustomer === customer.id}
+                                onChange={() => handleSelectCustomer(customer.id)}
                             />
                         </td>
                         <td>{customer.name}</td>
