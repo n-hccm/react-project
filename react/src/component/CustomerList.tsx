@@ -1,17 +1,34 @@
 import React from "react";
 import type { Customer } from "../types/Customer";
+import CustomerRecord from './CustomerRecord'
+import * as memdb from '../../memory/memdb';
 
-interface CustomerListProps {
-  list: Customer[];
-}
+const customerDefault: Customer = {
+    id: -1,
+    name: "",
+    email: "",
+    password: ""
+};
 
-const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
-    const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
+const CustomerList: React.FC = () => {
+    const [data, setData] = React.useState<any[]>([]);
+    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
-    const handleSelectCustomer = (uid: number) => {
-        setSelectedCustomer(prev => (prev === uid ? null : uid));
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const result = await memdb.getAll();
+            setData(result);
+        };
+        fetchData();
+    }, []);
+
+
+    const handleSelectCustomer = (customer: Customer) => {
+        setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
     };
+  
     return (
+        <>
         <div>
             <h2>Customer List</h2>
             <table>
@@ -24,13 +41,18 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </tr>
                 </thead>
                 <tbody>
-                {list.map((customer) => (
-                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
+                {data.map((customer) => (
+                    <tr
+                        key={customer.id}
+                        style={{
+                            fontWeight: selectedCustomer=== customer ? "bold" : "normal"
+                        }}
+                    >
                         <td>
                             <input
                                 type="checkbox"
-                                checked={selectedCustomer === customer.uid}
-                                onChange={() => handleSelectCustomer(customer.uid)}
+                                checked={selectedCustomer === customer}
+                                onChange={() => handleSelectCustomer(customer)}
                             />
                         </td>
                         <td>{customer.name}</td>
@@ -41,7 +63,9 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </tbody>
             </table>
         </div>
-    );
+        <CustomerRecord customer={selectedCustomer ?? customerDefault} />
+</>
+);
 };
 
 export default CustomerList;
