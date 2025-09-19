@@ -1,21 +1,16 @@
-//import section.
 import React from "react";
+import type { Customer } from "../types/Customer";
 
+interface CustomerListProps {
+  list: Customer[];
+}
 
-//create a basic example list of customer records. for testing.
-const staticData = [
-    { uid: 1, name: "John Doe", email: "jdoe@example.com", password: "password123" },
-    { uid: 2, name: "Jane Smith", email: "janesmith@example.com", password: "mypassword" },
-    { uid: 3, name: "Alice Johnson", email: "aj@example.com", password: "alice2024" }
-];
-
-const CustomerList: React.FC = () => {
+const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
     const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
 
     const handleSelectCustomer = (uid: number) => {
         setSelectedCustomer(prev => (prev === uid ? null : uid));
     };
-
     return (
         <div>
             <h2>Customer List</h2>
@@ -29,7 +24,7 @@ const CustomerList: React.FC = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {staticData.map((customer) => (
+                {list.map((customer) => (
                     <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
                         <td>
                             <input

@@ -1,15 +1,19 @@
-import React, { useState } from "react";
 
-const CustomerRecord: React.FC = () => {
-    const initialFormObject: any = { name: 'name1', email: 'email1', password: 'password1' };
-    const [formObject, setFormObject] = useState(initialFormObject);
+import React, { useState } from "react";
+import type { Customer } from "../types/Customer";
+
+interface CustomerRecordProps {
+    customer: Customer;
+}
+
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
+    const [formObject, setFormObject] = useState<Customer>(customer);
     const [showPassword, setShowPassword] = useState(false);
 
     const changeHandler = function (event: any) {
         const name = event.target.name;
         const value = event.target.value;
-        formObject[name] = value;
-        setFormObject({ ...formObject })
+    setFormObject({ ...formObject, [name]: value });
     }
 
     const deleteSelected = () => {
