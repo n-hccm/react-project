@@ -1,37 +1,48 @@
-
+//import section.
 import React from "react";
 
 
-//create a basic example list of customer records.
-//Style: name, email, password
-
+//create a basic example list of customer records. for testing.
 const staticData = [
-    {name: "John Doe", email: "jdoe@example.com", password: "password123"},
-    {name: "Jane Smith", email: "janesmith@example.com",password: "mypassword"},
-    {name: "Alice Johnson", email: "aj@example.com", password: "alice2024"}
-]
+    { uid: 1, name: "John Doe", email: "jdoe@example.com", password: "password123" },
+    { uid: 2, name: "Jane Smith", email: "janesmith@example.com", password: "mypassword" },
+    { uid: 3, name: "Alice Johnson", email: "aj@example.com", password: "alice2024" }
+];
 
-//This component will display the list of customers in a table format.
 const CustomerList: React.FC = () => {
+    const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
+
+    const handleSelectCustomer = (uid: number) => {
+        setSelectedCustomer(prev => (prev === uid ? null : uid));
+    };
+
     return (
         <div>
             <h2>Customer List</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                    </tr>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {staticData.map((customer, index) => (
-                        <tr key={index}>
-                            <td>{customer.name}</td>
-                            <td>{customer.email}</td>
-                            <td>{customer.password}</td>
-                        </tr>
-                    ))}
+                {staticData.map((customer) => (
+                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
+                        <td>
+                            <input
+                                type="checkbox"
+                                checked={selectedCustomer === customer.uid}
+                                onChange={() => handleSelectCustomer(customer.uid)}
+                            />
+                        </td>
+                        <td>{customer.name}</td>
+                        <td>{customer.email}</td>
+                        <td>{customer.password}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>
