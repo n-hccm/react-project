@@ -1,8 +1,6 @@
-//import section.
 import React from "react";
 
-
-//create a basic example list of customer records. for testing.
+//Testing data.
 const staticData = [
     { uid: 1, name: "John Doe", email: "jdoe@example.com", password: "password123" },
     { uid: 2, name: "Jane Smith", email: "janesmith@example.com", password: "mypassword" },
@@ -30,7 +28,12 @@ const CustomerList: React.FC = () => {
                 </thead>
                 <tbody>
                 {staticData.map((customer) => (
-                    <tr key={customer.uid} style={{ fontWeight: selectedCustomer === customer.uid ? "bold" : "normal" }}>
+                    <tr
+                        key={customer.uid}
+                        style={{
+                            fontWeight: selectedCustomer === customer.uid ? "bold" : "normal"
+                        }}
+                    >
                         <td>
                             <input
                                 type="checkbox"
