@@ -22,6 +22,11 @@ const CustomerList: React.FC = () => {
         fetchData();
     }, []);
 
+    const handleDeleteCustomer = (id: number) => {
+        setData(prev => prev.filter(c => c.id !== id));
+        setSelectedCustomer(customerDefault);
+    };
+
 
     const handleSelectCustomer = (customer: Customer) => {
         setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
@@ -63,8 +68,11 @@ const CustomerList: React.FC = () => {
                 </tbody>
             </table>
         </div>
-        <CustomerRecord
+            <CustomerRecord
+               
             customer={selectedCustomer ?? customerDefault}
+                onDelete={handleDeleteCustomer}
+           
             onCancel={() => setSelectedCustomer(customerDefault)}
         />
 </>
