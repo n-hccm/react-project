@@ -8,7 +8,7 @@ interface CustomerRecordProps {
 
 const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
-    const isNewCustomer = customer.uid === -1;  
+    const isNewCustomer = customer.id === -1;  
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
 
     useEffect(() => {
