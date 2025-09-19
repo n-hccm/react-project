@@ -1,5 +1,7 @@
 import React from "react";
 import type { Customer } from "../types/Customer";
+import CustomerRecord from './CustomerRecord'
+
 
 interface CustomerListProps {
   list: Customer[];
@@ -12,6 +14,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
         setSelectedCustomer(prev => (prev === uid ? null : uid));
     };
     return (
+        <>
         <div>
             <h2>Customer List</h2>
             <table>
@@ -41,6 +44,10 @@ const CustomerList: React.FC<CustomerListProps> = ({ list }) => {
                 </tbody>
             </table>
         </div>
+        {selectedCustomer !== null && (
+            <CustomerRecord customer={list.find(c => c.uid === selectedCustomer)!} />
+        )}
+</>
     );
 };
 

@@ -1,7 +1,6 @@
 import './App.css'
 
 import CustomerList from './component/CustomerList'
-import CustomerRecord from './component/CustomerRecord'
 
 
 //create a basic example list of customer records.
@@ -17,7 +16,6 @@ function App() {
   return (
     <>
     <CustomerList list={staticData}/>
-    <CustomerRecord customer={staticData[0]}/>
     </>
   )
 }
