@@ -69,9 +69,12 @@ const CustomerList: React.FC = () => {
             </table>
         </div>
             <CustomerRecord
-                customer={selectedCustomer ?? customerDefault}
+               
+            customer={selectedCustomer ?? customerDefault}
                 onDelete={handleDeleteCustomer}
-            />
+           
+            onCancel={() => setSelectedCustomer(customerDefault)}
+        />
 </>
 );
 };
