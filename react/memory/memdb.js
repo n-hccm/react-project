@@ -21,7 +21,7 @@ const items = [
 
 
 export function getAll(){
-    return items;
+  return [...items];
 }
 
 export function get(id) {

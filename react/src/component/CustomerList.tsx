@@ -63,7 +63,11 @@ const CustomerList: React.FC = () => {
                 </tbody>
             </table>
         </div>
-        <CustomerRecord customer={selectedCustomer ?? customerDefault} />
+        <CustomerRecord customer={selectedCustomer ?? customerDefault} onSave={() => {
+            setSelectedCustomer(customerDefault);
+            const result = memdb.getAll();
+            setData(result);
+        }} />
 </>
 );
 };

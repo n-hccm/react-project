@@ -4,9 +4,11 @@ import type { Customer } from "../types/Customer";
 
 interface CustomerRecordProps {
     customer: Customer;
+    onSave: () => void;
 }
 
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
+import * as memdb from '../../memory/memdb';
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onSave }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
     const isNewCustomer = customer.id === -1;  
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
@@ -27,7 +29,14 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer }) => {
     }
 
     const saveSelected = () => {
-        console.log("saveSelected")
+        if (customer.id === -1) {
+            memdb.post(formObject);
+            alert('Cliente creado correctamente');
+        } else {
+            memdb.put(customer.id, formObject);
+            alert('Cliente actualizado correctamente');
+        }
+        onSave();
     }
 
     const cancelSelected = () => {
