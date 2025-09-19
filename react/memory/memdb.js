@@ -75,4 +75,4 @@ function getNextId(){
 }
 
 
-//export default {getAll, get, deleteById, post, put};
+export default {getAll, get, deleteById, post, put, items};

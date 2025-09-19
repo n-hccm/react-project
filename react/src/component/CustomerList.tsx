@@ -1,17 +1,20 @@
 import React from "react";
-
-//Testing data.
-const staticData = [
-    { uid: 1, name: "John Doe", email: "jdoe@example.com", password: "password123" },
-    { uid: 2, name: "Jane Smith", email: "janesmith@example.com", password: "mypassword" },
-    { uid: 3, name: "Alice Johnson", email: "aj@example.com", password: "alice2024" }
-];
+import * as memdb from '../../memory/memdb';
 
 const CustomerList: React.FC = () => {
+    const [data, setData] = React.useState<any[]>([]);
     const [selectedCustomer, setSelectedCustomer] = React.useState<number | null>(null);
 
-    const handleSelectCustomer = (uid: number) => {
-        setSelectedCustomer(prev => (prev === uid ? null : uid));
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const result = await memdb.getAll();
+            setData(result);
+        };
+        fetchData();
+    }, []);
+
+    const handleSelectCustomer = (id: number) => {
+        setSelectedCustomer(prev => (prev === id ? null : id));
     };
 
     return (
@@ -27,18 +30,18 @@ const CustomerList: React.FC = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {staticData.map((customer) => (
+                {data.map((customer) => (
                     <tr
-                        key={customer.uid}
+                        key={customer.id}
                         style={{
-                            fontWeight: selectedCustomer === customer.uid ? "bold" : "normal"
+                            fontWeight: selectedCustomer === customer.id ? "bold" : "normal"
                         }}
                     >
                         <td>
                             <input
                                 type="checkbox"
-                                checked={selectedCustomer === customer.uid}
-                                onChange={() => handleSelectCustomer(customer.uid)}
+                                checked={selectedCustomer === customer.id}
+                                onChange={() => handleSelectCustomer(customer.id)}
                             />
                         </td>
                         <td>{customer.name}</td>
