@@ -3,10 +3,6 @@ import type { Customer } from "../types/Customer";
 import CustomerRecord from './CustomerRecord'
 import * as memdb from '../../memory/memdb';
 
-interface CustomerListProps {
-  list: Customer[];
-}
-
 const customerDefault: Customer = {
     id: -1,
     name: "",
@@ -16,7 +12,7 @@ const customerDefault: Customer = {
 
 const CustomerList: React.FC = () => {
     const [data, setData] = React.useState<any[]>([]);
-    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | null>(null);
+    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -49,14 +45,14 @@ const CustomerList: React.FC = () => {
                     <tr
                         key={customer.id}
                         style={{
-                            fontWeight: selectedCustomer === customer.id ? "bold" : "normal"
+                            fontWeight: selectedCustomer=== customer ? "bold" : "normal"
                         }}
                     >
                         <td>
                             <input
                                 type="checkbox"
-                                checked={selectedCustomer === customer.id}
-                                onChange={() => handleSelectCustomer(customer.id)}
+                                checked={selectedCustomer === customer}
+                                onChange={() => handleSelectCustomer(customer)}
                             />
                         </td>
                         <td>{customer.name}</td>
