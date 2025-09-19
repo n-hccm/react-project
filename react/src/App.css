@@ -1,3 +1,93 @@
+body {
+  background-color: #f4f6fb;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #111;
+}
+
+.main-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+
+h2 {
+  color: #222;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  color: #111;
+}
+
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  color: #111;
+}
+
+th {
+  background: #e9ecef;
+  color: #111;
+  font-weight: 500;
+}
+
+tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: -webkit-fill-available;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  color: #111;
+}
+
+button, input[type="button"] {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  margin: 6px 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #fff;
+}
+
+.btn-delete, .btn-cancel {
+  background: #e53935;
+}
+.btn-delete:hover, .btn-cancel:hover {
+  background: #b71c1c;
+}
+
+.btn-save, .btn-add {
+  background: #43a047;
+}
+.btn-save:hover, .btn-create:hover {
+  background: #1b5e20;
+}
+
+.btn-update {
+  background: #2563eb;
+}
+.btn-update:hover {
+  background: #1e40af;
+}
 #root {
   max-width: 1280px;
   margin: 0 auto;
