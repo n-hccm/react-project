@@ -4,10 +4,6 @@ import type { Customer } from "../types/Customer";
 import CustomerRecord from './CustomerRecord';
 import * as memdb from '../../memory/memdb';
 
-interface CustomerListProps {
-    customers?: Customer[];
-}
-
 const customerDefault: Customer = {
     id: -1,
     name: "",
@@ -16,33 +12,26 @@ const customerDefault: Customer = {
 };
 
 
-const CustomerList: React.FC<CustomerListProps> = ({ customers }) => {
+const CustomerList: React.FC<> = () => {
     const [data, setData] = React.useState<Customer[]>(customers ?? []);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
-
-    // Método para refrescar los datos
-    const refreshData = async () => {
-        if (customers) {
-            setData(customers);
-        } else {
-            const result = await memdb.getAll();
-            setData(result);
-        }
-    };
-
     React.useEffect(() => {
-        refreshData();
-    }, [customers]);
-
+        const fetchData = async () => {
+            const result = await fetch("http://localhost:4000/customers").then(res => res.json());
+            setData(result);
+        };
+        fetchData();
+    }, []);
 
     const handleDeleteCustomer = async (id: number) => {
         await memdb.deleteById(id);
-        await refreshData();
+        // Refresh data
+        const result = await memdb.getAll();
+        setData(result);
         setSelectedCustomer(customerDefault);
     };
-
-
+    
     const handleSaveCustomer = async (customer: Customer) => {
         if (customer.id === -1) {
             // New customer
@@ -51,7 +40,9 @@ const CustomerList: React.FC<CustomerListProps> = ({ customers }) => {
             // Existing customer
             await memdb.put(customer.id, customer);
         }
-        await refreshData();
+        // Refresh data
+        const result = await memdb.getAll();
+        setData(result);
         setSelectedCustomer(customerDefault);
     }
 
