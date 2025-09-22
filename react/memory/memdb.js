@@ -1,78 +1,92 @@
-const items = [
-    {
-      "id": 0,
-      "name": "Mike Johnsons",
-      "email": "mikej@abc.com",
-      "password": "mikej"
-    },
-    {
-      "name": "Cindy Smiths",
-      "email": "cinds@abc.com",
-      "password": "cinds",
-      "id": 1
-    },
-    {
-      "name": "Julio Martins",
-      "email": "julim@abc.com",
-      "password": "julim",
-      "id": 2
+const rest_url = "http://localhost:4000/customers";
+
+export async function getAll(){
+  try{
+    const res = await fetch(rest_url);
+    if( res.ok ){
+      const data = await res.json();
+      return data;
+    }else{
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-  ]
-
-
-export function getAll(){
-  return [...items];
-}
-
-export function get(id) {
-    let result = null;
-    for( let item of items){
-        if(item.id === id){
-            result = item;
-        }
-    }
-  return result;
-}
-
-export function deleteById(id) {
-  let arrayIndex = getArrayIndexForId(id);
-  if( arrayIndex >= 0 && arrayIndex < items.length){
-    items.splice(arrayIndex,1);
+  }catch(e){
+    console.error("Error getting data:", e);
+    return [];
   }
 }
 
-export function post(item) {
-  let nextid = getNextId();
-  item.id = nextid;
-  items[items.length] = item;
-}
-
-export function put(id, item) {
-  for( let i = 0; i < items.length; i++){
-    if(items[i].id === id){
-      items[i] = item;
-      return;
+export async function get(id) {
+  try{
+    const res = await fetch(`${rest_url}/${id}`);
+    if( res.ok ){
+      const data = await res.json();
+      return data;
+    }else{
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
+  }catch(e){
+    console.error("Error getting data:", e);
+    return null;
   }
 }
 
-function getArrayIndexForId(id){
-  for( let i = 0; i < items.length; i++){
-    if(items[i].id === id){
-      return i;
+export async function deleteById(id) {
+  try{
+    const res = await fetch(`${rest_url}/${id}`, {
+      method: 'DELETE'
+    });
+    if( res.ok ){
+      return true;
+    }else{
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
+  }catch(e){
+    console.error("Error deleting data:", e);
+    return false;º
   }
-  return -1;  
 }
 
-
-function getNextId(){
-  let maxid = 0;
-  for( let item of items){
-    maxid = (item.id > maxid)?item.id:maxid;
-  }  
-  return maxid + 1;
+export async function post(item) {
+  try{
+    const { id, ...rest } = item;
+    const res = await fetch(rest_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(rest)
+    });
+    if( res.ok ){
+      const data = await res.json();
+      return data;
+    }else{
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+  }catch(e){
+    console.error("Error posting data:", e);
+    return null;
+  }
 }
 
+export async function put(id, item) {
+  try{
+    const res = await fetch(`${rest_url}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    });
+    if( res.ok ){
+      const data = await res.json();
+      return data;
+    }else{
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+  }catch(e){
+    console.error("Error updating data:", e);
+    return null;
+  }
+}
 
-export default {getAll, get, deleteById, post, put, items};
+export default {getAll, get, deleteById, post, put};

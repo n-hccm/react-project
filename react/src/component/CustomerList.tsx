@@ -16,30 +16,30 @@ const CustomerList: React.FC = () => {
 
     React.useEffect(() => {
         const fetchData = async () => {
-            const result = await memdb.getAll();
+            const result = await fetch("http://localhost:4000/customers").then(res => res.json());
             setData(result);
         };
         fetchData();
     }, []);
 
-    const handleDeleteCustomer = (id: number) => {
-        memdb.deleteById(id);
+    const handleDeleteCustomer = async (id: number) => {
+        await memdb.deleteById(id);
         // Refresh data
-        const result = memdb.getAll();
+        const result = await memdb.getAll();
         setData(result);
         setSelectedCustomer(customerDefault);
     };
 
-    const handleSaveCustomer = (customer: Customer) => {
+    const handleSaveCustomer = async (customer: Customer) => {
         if (customer.id === -1) {
             // New customer
-            memdb.post(customer);
+            await memdb.post(customer);
         } else {
             // Existing customer
-            memdb.put(customer.id, customer);
+            await memdb.put(customer.id, customer);
         }
         // Refresh data
-        const result = memdb.getAll();
+        const result = await memdb.getAll();
         setData(result);
         setSelectedCustomer(customerDefault);
     }
