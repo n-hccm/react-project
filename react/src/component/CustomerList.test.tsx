@@ -83,6 +83,9 @@ describe("CustomerList Component Tests", () => {
         expect(emailInput).toHaveValue('new@customer.com');
         expect(passwordInput).toHaveValue('newpass');
 
+         const bodyRowsBeforeSave = await screen.findAllByRole('row');
+        const dataRowsBeforeSave = bodyRowsBeforeSave.filter(row => row.querySelectorAll('td').length > 0);
+
         await fireEvent.click(saveButton);
         //Sleep
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -92,7 +95,7 @@ describe("CustomerList Component Tests", () => {
         const dataRows = bodyRows.filter(row => row.querySelectorAll('td').length > 0);
         console.log(dataRows.map(row => row.textContent));
 
-        expect(dataRows.length).toBe(4);
+        expect(dataRows.length).toBe(dataRowsBeforeSave.length + 1);
         const lastRowCells = dataRows[dataRows.length - 1].querySelectorAll('td');
         expect(lastRowCells[1].textContent).toBe('New Customer');
         expect(lastRowCells[2].textContent).toBe('new@customer.com');
