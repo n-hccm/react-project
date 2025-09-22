@@ -5,6 +5,7 @@ interface CustomerRecordProps {
     customer: Customer;
     onDelete: (id: number) => void;
     onCancel?: () => void;
+    onSave: (customer:Customer) => void;
 }
 
 const defaultCustomer: Customer = {
@@ -14,7 +15,7 @@ const defaultCustomer: Customer = {
     password: ''
 };
 
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onCancel }) => {
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onCancel, onSave }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
     const isNewCustomer = customer.id === -1;
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
@@ -37,7 +38,8 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onC
     };
 
     const saveSelected = () => {
-        console.log("saveSelected")
+        onSave(formObject);
+        cancelSelected();
     }
 
     const cancelSelected = () => {

@@ -1,24 +1,49 @@
-//PLACEHOLDER
+import { describe, expect, it } from 'vitest'
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+import CustomerRecord from './CustomerRecord';
 
-//import React from 'react';
-//import { render, screen } from '@testing-library/react';
-//import '@testing-library/jest-dom/extend-expect';
-//import CustomerRecord from './CustomerRecord';
 
-//describe('CustomerRecord Component', () => {
-//  const mockCustomer = {
-//    id: '1',
-//    name: 'John Doe',
-//    email: 'jdoe@example.com',
-//    password: 'password123',
-//  };
+describe("CustomerRecord Component Tests", () => {
 
-//  test('renders CustomerRecord component', () => {
-//    render(<CustomerRecord customer={mockCustomer} />);
-//    expect(screen.getByText('Customer Record')).toBeInTheDocument();
-//  });
+    it('CustomerRecord renders Edit Custome', () => {
+        const customer = {
+            id: 1,
+            name: 'John Doe',
+            email: 'john@example.com',
+            password: '1234'
+        };
+        const onDelete = console.log;
+        const onSave = console.log;
+        render(
+            <CustomerRecord
+                customer={customer}
+                onDelete={onDelete}
+                onSave={onSave}
+            />
+        );
+        expect(screen.getByText(/Edit Customer/i)).toBeInTheDocument();
+    })
 
-//  test('displays customer information', () => {
-//    render(<CustomerRecord customer={mockCustomer} />);
-//    expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
-//    expect(screen.getByDisplayValue('
+    it('CustomerRecord renders New Customer', () => {
+        const customer = {
+            id: -1,
+            name: '',
+            email: '',
+            password: ''
+        };
+        const onDelete = console.log;
+        const onSave = console.log;
+        render(
+            <CustomerRecord
+                customer={customer}
+                onDelete={onDelete}
+                onSave={onSave}
+            />
+        );
+        expect(screen.getByText(/Add New Customer/i)).toBeInTheDocument();
+    })
+
+    
+
+})
