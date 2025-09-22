@@ -15,6 +15,8 @@ const customerDefault: Customer = {
 const CustomerList: React.FC = () => {
     const [data, setData] = React.useState<any[]>([]);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
+    const [search, setSearch] = React.useState("");
+    const [appliedSearch, setAppliedSearch] = React.useState("");
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -50,10 +52,30 @@ const CustomerList: React.FC = () => {
         setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
     };
 
+    // Filtrar solo si hay búsqueda aplicada
+    const filteredData = appliedSearch
+        ? data.filter(
+            (customer) =>
+                customer.name.toLowerCase().includes(appliedSearch.toLowerCase()) ||
+                customer.email.toLowerCase().includes(appliedSearch.toLowerCase())
+        )
+        : data;
+
     return (
         <>
             <div>
                 <h2>Customer List</h2>
+                <div style={{ marginBottom: "1rem" }}>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o email"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{ padding: "0.5rem", width: "60%" }}
+                    />
+                    <button onClick={() => setAppliedSearch(search)} style={{ marginLeft: 8, backgroundColor: "blue", color: "white" }}>Buscar</button>
+                    <button onClick={() => { setAppliedSearch(""); setSearch(""); }} style={{ marginLeft: 8, backgroundColor: "gray", color: "white" }}>Limpiar</button>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -64,7 +86,7 @@ const CustomerList: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((customer) => (
+                        {filteredData.map((customer) => (
                             <tr
                                 key={customer.id}
                                 style={{
@@ -87,12 +109,10 @@ const CustomerList: React.FC = () => {
                 </table>
             </div>
             <CustomerRecord
-
                 customer={selectedCustomer ?? customerDefault}
                 onDelete={handleDeleteCustomer}
                 onCancel={() => setSelectedCustomer(customerDefault)}
                 onSave={(customer: Customer) => handleSaveCustomer(customer)}
-
             />
         </>
     );
