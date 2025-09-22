@@ -11,49 +11,80 @@ const customerDefault: Customer = {
     password: ""
 };
 
+const PAGE_SIZE = 5;
 
 const CustomerList: React.FC = () => {
     const [data, setData] = React.useState<any[]>([]);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
+    const [page, setPage] = React.useState(1);
+    const [inputPage, setInputPage] = React.useState("1");
+    const [totalPages, setTotalPages] = React.useState(1);
+
+    const fetchPage = async (pageNum: number) => {
+        const result = await memdb.getPage(pageNum, PAGE_SIZE);
+        setData(result.data);
+        setPage(result.currentPage);
+        setInputPage(result.currentPage.toString());
+        setTotalPages(result.totalPages);
+    };
 
     React.useEffect(() => {
-        const fetchData = async () => {
-            const result = await fetch("http://localhost:4000/customers").then(res => res.json());
-            setData(result);
-        };
-        fetchData();
-    }, []);
+        fetchPage(page);
+    }, [page]);
 
     const handleDeleteCustomer = async (id: number) => {
         await memdb.deleteById(id);
-        // Refresh data
-        const result = await memdb.getAll();
-        setData(result);
+        fetchPage(page);
         setSelectedCustomer(customerDefault);
     };
-    
+
     const handleSaveCustomer = async (customer: Customer) => {
         if (customer.id === -1) {
-            // New customer
             await memdb.post(customer);
         } else {
-            // Existing customer
             await memdb.put(customer.id, customer);
         }
-        // Refresh data
-        const result = await memdb.getAll();
-        setData(result);
+        fetchPage(page);
         setSelectedCustomer(customerDefault);
-    }
+    };
 
     const handleSelectCustomer = (customer: Customer) => {
         setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
     };
 
+    const handlePrevPage = () => {
+        if (page > 1) setPage(page - 1);
+    };
+
+    const handleNextPage = () => {
+        if (page < totalPages) setPage(page + 1);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputPage(e.target.value);
+    };
+
+    const handleInputSubmit = () => {
+        const pageNum = parseInt(inputPage, 10);
+        if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+            setPage(pageNum);
+        }
+    };
+
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleInputSubmit();
+        }
+    };
+
+    const handleInputBlur = () => {
+        handleInputSubmit();
+    };
+
     return (
         <>
             <div>
-                <h2>Customer List</h2>
+                <h2>Customer List (Página {page} de {totalPages})</h2>
                 <table>
                     <thead>
                         <tr>
@@ -68,13 +99,13 @@ const CustomerList: React.FC = () => {
                             <tr
                                 key={customer.id}
                                 style={{
-                                    fontWeight: selectedCustomer === customer ? "bold" : "normal"
+                                    fontWeight: selectedCustomer.id === customer.id ? "bold" : "normal"
                                 }}
                             >
                                 <td>
                                     <input
                                         type="checkbox"
-                                        checked={selectedCustomer === customer}
+                                        checked={selectedCustomer.id === customer.id}
                                         onChange={() => handleSelectCustomer(customer)}
                                     />
                                 </td>
@@ -85,14 +116,34 @@ const CustomerList: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
-            </div>
-            <CustomerRecord
 
+                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center' }}>
+                    <button onClick={handlePrevPage} disabled={page === 1}>Anterior</button>
+
+                    <label>
+                        Página:
+                        <input
+                            type="number"
+                            value={inputPage}
+                            onChange={handleInputChange}
+                            onKeyDown={handleInputKeyDown}
+                            onBlur={handleInputBlur}
+                            min={1}
+                            max={totalPages}
+                            style={{ width: '60px', marginLeft: '0.5rem' }}
+                        />
+                        <span> / {totalPages}</span>
+                    </label>
+
+                    <button onClick={handleNextPage} disabled={page === totalPages}>Siguiente</button>
+                </div>
+            </div>
+
+            <CustomerRecord
                 customer={selectedCustomer ?? customerDefault}
                 onDelete={handleDeleteCustomer}
                 onCancel={() => setSelectedCustomer(customerDefault)}
-                onSave={(customer: Customer) => handleSaveCustomer(customer)}
-
+                onSave={handleSaveCustomer}
             />
         </>
     );
