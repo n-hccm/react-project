@@ -1,6 +1,7 @@
+
 import React from "react";
 import type { Customer } from "../types/Customer";
-import CustomerRecord from './CustomerRecord'
+import CustomerRecord from './CustomerRecord';
 import * as memdb from '../../memory/memdb';
 
 const customerDefault: Customer = {
@@ -10,8 +11,9 @@ const customerDefault: Customer = {
     password: ""
 };
 
-const CustomerList: React.FC = () => {
-    const [data, setData] = React.useState<any[]>([]);
+
+const CustomerList: React.FC<> = () => {
+    const [data, setData] = React.useState<Customer[]>(customers ?? []);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
     React.useEffect(() => {
@@ -29,7 +31,7 @@ const CustomerList: React.FC = () => {
         setData(result);
         setSelectedCustomer(customerDefault);
     };
-
+    
     const handleSaveCustomer = async (customer: Customer) => {
         if (customer.id === -1) {
             // New customer
