@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import type { Customer } from "../types/Customer";
-import * as memdb from '../../memory/memdb';
 
 interface CustomerRecordProps {
     customer: Customer;
