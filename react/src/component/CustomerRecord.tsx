@@ -1,16 +1,21 @@
-
 import React, { useState, useEffect } from "react";
 import type { Customer } from "../types/Customer";
+import * as memdb from '../../memory/memdb';
 
 interface CustomerRecordProps {
     customer: Customer;
-    onSave: () => void;
 }
 
-import * as memdb from '../../memory/memdb';
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onSave }) => {
+const defaultCustomer: Customer = {
+    id: -1,
+    name: '',
+    email: '',
+    password: ''
+};
+
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onCancel, onSave }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
-    const isNewCustomer = customer.id === -1;  
+    const isNewCustomer = customer.id === -1;
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
 
     useEffect(() => {
@@ -18,15 +23,17 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onSave }) => 
     }, [customer]);
     const [showPassword, setShowPassword] = useState(false);
 
-    const changeHandler = function (event: any) {
+    const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
-    setFormObject({ ...formObject, [name]: value });
-    }
+        setFormObject({ ...formObject, [name]: value });
+    };
 
+    //Delete selected customer.
     const deleteSelected = () => {
-        console.log("deleteSelected")
-    }
+        onDelete(customer.id);
+        console.log("deleteSelected");
+    };
 
     const saveSelected = () => {
         if (customer.id === -1) {
@@ -40,7 +47,8 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onSave }) => 
     }
 
     const cancelSelected = () => {
-        console.log("cancelSelected")
+        setFormObject(defaultCustomer);
+        if (onCancel) onCancel();
     }
 
     return (
