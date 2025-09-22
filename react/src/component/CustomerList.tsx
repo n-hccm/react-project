@@ -74,6 +74,11 @@ const CustomerList: React.FC = () => {
                 onDelete={handleDeleteCustomer}
            
             onCancel={() => setSelectedCustomer(customerDefault)}
+              onSave={() => {
+            setSelectedCustomer({ ...customerDefault });
+            const result = memdb.getAll();
+            setData(result);
+        }}
         />
 </>
 );

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import type { Customer } from "../types/Customer";
+import * as memdb from '../../memory/memdb';
 
 interface CustomerRecordProps {
     customer: Customer;
-    onDelete: (id: number) => void;
-    onCancel?: () => void;
 }
 
 const defaultCustomer: Customer = {
@@ -14,7 +13,7 @@ const defaultCustomer: Customer = {
     password: ''
 };
 
-const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onCancel }) => {
+const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onCancel, onSave }) => {
     const [formObject, setFormObject] = useState<Customer>(customer);
     const isNewCustomer = customer.id === -1;
     const title = isNewCustomer ? "Add New Customer" : "Edit Customer";
@@ -37,7 +36,14 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onC
     };
 
     const saveSelected = () => {
-        console.log("saveSelected")
+        if (customer.id === -1) {
+            memdb.post(formObject);
+            alert('Cliente creado correctamente');
+        } else {
+            memdb.put(customer.id, formObject);
+            alert('Cliente actualizado correctamente');
+        }
+        onSave();
     }
 
     const cancelSelected = () => {
