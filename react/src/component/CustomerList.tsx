@@ -12,8 +12,8 @@ const customerDefault: Customer = {
 };
 
 
-const CustomerList: React.FC<> = () => {
-    const [data, setData] = React.useState<Customer[]>(customers ?? []);
+const CustomerList: React.FC = () => {
+    const [data, setData] = React.useState<any[]>([]);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
     React.useEffect(() => {
