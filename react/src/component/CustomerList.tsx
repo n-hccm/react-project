@@ -23,65 +23,77 @@ const CustomerList: React.FC = () => {
     }, []);
 
     const handleDeleteCustomer = (id: number) => {
-        setData(prev => prev.filter(c => c.id !== id));
+        memdb.deleteById(id);
+        // Refresh data
+        const result = memdb.getAll();
+        setData(result);
         setSelectedCustomer(customerDefault);
     };
 
+    const handleSaveCustomer = (customer: Customer) => {
+        if (customer.id === -1) {
+            // New customer
+            memdb.post(customer);
+        } else {
+            // Existing customer
+            memdb.put(customer.id, customer);
+        }
+        // Refresh data
+        const result = memdb.getAll();
+        setData(result);
+        setSelectedCustomer(customerDefault);
+    }
 
     const handleSelectCustomer = (customer: Customer) => {
         setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
     };
-  
+
     return (
         <>
-        <div>
-            <h2>Customer List</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Select</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Password</th>
-                </tr>
-                </thead>
-                <tbody>
-                {data.map((customer) => (
-                    <tr
-                        key={customer.id}
-                        style={{
-                            fontWeight: selectedCustomer=== customer ? "bold" : "normal"
-                        }}
-                    >
-                        <td>
-                            <input
-                                type="checkbox"
-                                checked={selectedCustomer === customer}
-                                onChange={() => handleSelectCustomer(customer)}
-                            />
-                        </td>
-                        <td>{customer.name}</td>
-                        <td>{customer.email}</td>
-                        <td>{customer.password}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-        </div>
+            <div>
+                <h2>Customer List</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((customer) => (
+                            <tr
+                                key={customer.id}
+                                style={{
+                                    fontWeight: selectedCustomer === customer ? "bold" : "normal"
+                                }}
+                            >
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCustomer === customer}
+                                        onChange={() => handleSelectCustomer(customer)}
+                                    />
+                                </td>
+                                <td>{customer.name}</td>
+                                <td>{customer.email}</td>
+                                <td>{customer.password}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             <CustomerRecord
-               
-            customer={selectedCustomer ?? customerDefault}
+
+                customer={selectedCustomer ?? customerDefault}
                 onDelete={handleDeleteCustomer}
-           
-            onCancel={() => setSelectedCustomer(customerDefault)}
-              onSave={() => {
-            setSelectedCustomer({ ...customerDefault });
-            const result = memdb.getAll();
-            setData(result);
-        }}
-        />
-</>
-);
+                onCancel={() => setSelectedCustomer(customerDefault)}
+                onSave={(customer: Customer) => handleSaveCustomer(customer)}
+
+            />
+        </>
+    );
 };
 
 export default CustomerList;

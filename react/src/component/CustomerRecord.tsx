@@ -4,6 +4,9 @@ import * as memdb from '../../memory/memdb';
 
 interface CustomerRecordProps {
     customer: Customer;
+    onDelete: (id: number) => void;
+    onCancel?: () => void;
+    onSave: (customer:Customer) => void;
 }
 
 const defaultCustomer: Customer = {
@@ -36,14 +39,8 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onC
     };
 
     const saveSelected = () => {
-        if (customer.id === -1) {
-            memdb.post(formObject);
-            alert('Cliente creado correctamente');
-        } else {
-            memdb.put(customer.id, formObject);
-            alert('Cliente actualizado correctamente');
-        }
-        onSave();
+        onSave(formObject);
+        cancelSelected();
     }
 
     const cancelSelected = () => {
