@@ -19,6 +19,8 @@ const CustomerList: React.FC = () => {
     const [page, setPage] = React.useState(1);
     const [inputPage, setInputPage] = React.useState("1");
     const [totalPages, setTotalPages] = React.useState(1);
+        const [search, setSearch] = React.useState("");
+    const [appliedSearch, setAppliedSearch] = React.useState("");
 
     const fetchPage = async (pageNum: number) => {
         const result = await memdb.getPage(pageNum, PAGE_SIZE);
@@ -27,7 +29,7 @@ const CustomerList: React.FC = () => {
         setInputPage(result.currentPage.toString());
         setTotalPages(result.totalPages);
     };
-
+  
     React.useEffect(() => {
         fetchPage(page);
     }, [page]);
@@ -81,10 +83,29 @@ const CustomerList: React.FC = () => {
         handleInputSubmit();
     };
 
+    const filteredData = appliedSearch
+        ? data.filter(
+            (customer) =>
+                customer.name.toLowerCase().includes(appliedSearch.toLowerCase()) ||
+                customer.email.toLowerCase().includes(appliedSearch.toLowerCase())
+        )
+        : data;
+
     return (
         <>
             <div>
                 <h2>Customer List (Página {page} de {totalPages})</h2>
+                <div style={{ marginBottom: "1rem" }}>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o email"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        style={{ padding: "0.5rem", width: "60%" }}
+                    />
+                    <button onClick={() => setAppliedSearch(search)} style={{ marginLeft: 8, backgroundColor: "blue", color: "white" }}>Buscar</button>
+                    <button onClick={() => { setAppliedSearch(""); setSearch(""); }} style={{ marginLeft: 8, backgroundColor: "gray", color: "white" }}>Limpiar</button>
+                </div>
                 <table>
                     <thead>
                         <tr>
@@ -95,7 +116,7 @@ const CustomerList: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.map((customer) => (
+                        {filteredData.map((customer) => (
                             <tr
                                 key={customer.id}
                                 style={{
@@ -138,7 +159,6 @@ const CustomerList: React.FC = () => {
                     <button onClick={handleNextPage} disabled={page === totalPages}>Siguiente</button>
                 </div>
             </div>
-
             <CustomerRecord
                 customer={selectedCustomer ?? customerDefault}
                 onDelete={handleDeleteCustomer}
