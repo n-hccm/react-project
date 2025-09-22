@@ -1,7 +1,12 @@
+
 import React from "react";
 import type { Customer } from "../types/Customer";
-import CustomerRecord from './CustomerRecord'
+import CustomerRecord from './CustomerRecord';
 import * as memdb from '../../memory/memdb';
+
+interface CustomerListProps {
+    customers?: Customer[];
+}
 
 const customerDefault: Customer = {
     id: -1,
@@ -10,37 +15,43 @@ const customerDefault: Customer = {
     password: ""
 };
 
-const CustomerList: React.FC = () => {
-    const [data, setData] = React.useState<any[]>([]);
+
+const CustomerList: React.FC<CustomerListProps> = ({ customers }) => {
+    const [data, setData] = React.useState<Customer[]>(customers ?? []);
     const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
 
-    React.useEffect(() => {
-        const fetchData = async () => {
+
+    // Método para refrescar los datos
+    const refreshData = async () => {
+        if (customers) {
+            setData(customers);
+        } else {
             const result = await memdb.getAll();
             setData(result);
-        };
-        fetchData();
-    }, []);
+        }
+    };
 
-    const handleDeleteCustomer = (id: number) => {
-        memdb.deleteById(id);
-        // Refresh data
-        const result = memdb.getAll();
-        setData(result);
+    React.useEffect(() => {
+        refreshData();
+    }, [customers]);
+
+
+    const handleDeleteCustomer = async (id: number) => {
+        await memdb.deleteById(id);
+        await refreshData();
         setSelectedCustomer(customerDefault);
     };
 
-    const handleSaveCustomer = (customer: Customer) => {
+
+    const handleSaveCustomer = async (customer: Customer) => {
         if (customer.id === -1) {
             // New customer
-            memdb.post(customer);
+            await memdb.post(customer);
         } else {
             // Existing customer
-            memdb.put(customer.id, customer);
+            await memdb.put(customer.id, customer);
         }
-        // Refresh data
-        const result = memdb.getAll();
-        setData(result);
+        await refreshData();
         setSelectedCustomer(customerDefault);
     }
 
