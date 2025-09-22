@@ -19,11 +19,10 @@ const CustomerList: React.FC = () => {
     const [page, setPage] = React.useState(1);
     const [inputPage, setInputPage] = React.useState("1");
     const [totalPages, setTotalPages] = React.useState(1);
-        const [search, setSearch] = React.useState("");
-    const [appliedSearch, setAppliedSearch] = React.useState("");
+    const [search, setSearch] = React.useState("");
 
     const fetchPage = async (pageNum: number) => {
-        const result = await memdb.getPage(pageNum, PAGE_SIZE);
+        const result = await memdb.getPage(pageNum, PAGE_SIZE, search.toLowerCase());
         setData(result.data);
         setPage(result.currentPage);
         setInputPage(result.currentPage.toString());
@@ -32,7 +31,7 @@ const CustomerList: React.FC = () => {
   
     React.useEffect(() => {
         fetchPage(page);
-    }, [page]);
+    }, [page, search]);
 
     const handleDeleteCustomer = async (id: number) => {
         await memdb.deleteById(id);
@@ -83,13 +82,13 @@ const CustomerList: React.FC = () => {
         handleInputSubmit();
     };
 
-    const filteredData = appliedSearch
+    /*const filteredData = appliedSearch
         ? data.filter(
             (customer) =>
                 customer.name.toLowerCase().includes(appliedSearch.toLowerCase()) ||
                 customer.email.toLowerCase().includes(appliedSearch.toLowerCase())
         )
-        : data;
+        : data;*/
 
     return (
         <>
@@ -103,8 +102,9 @@ const CustomerList: React.FC = () => {
                         onChange={e => setSearch(e.target.value)}
                         style={{ padding: "0.5rem", width: "60%" }}
                     />
-                    <button onClick={() => setAppliedSearch(search)} style={{ marginLeft: 8, backgroundColor: "blue", color: "white" }}>Buscar</button>
-                    <button onClick={() => { setAppliedSearch(""); setSearch(""); }} style={{ marginLeft: 8, backgroundColor: "gray", color: "white" }}>Limpiar</button>
+                     
+                    {/*<button onClick={() => {fetchPage(page);}} style={{ marginLeft: 8, backgroundColor: "blue", color: "white" }}>Buscar</button>*/}
+                    <button onClick={() => {setSearch(""); fetchPage(page);}} style={{ marginLeft: 8, backgroundColor: "gray", color: "white" }}>Limpiar</button>
                 </div>
                 <table>
                     <thead>
@@ -116,7 +116,7 @@ const CustomerList: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.map((customer) => (
+                        {data.map((customer) => (
                             <tr
                                 key={customer.id}
                                 style={{
