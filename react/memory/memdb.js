@@ -14,6 +14,34 @@ export async function getAll(){
     return [];
   }
 }
+export async function getPage(page = 1, size = 10, search="") {
+  try {
+    const url = `${rest_url}?_page=${page}&_limit=${size}&q=${search}`;
+
+    const res = await fetch(url);
+    if (res.ok) {
+      const totalCount = res.headers.get('x-total-count'); 
+      const data = await res.json();
+
+      return {
+        data,
+        totalCount: Number(totalCount),
+        totalPages: Math.ceil(totalCount / size),
+        currentPage: page
+      };
+    } else {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+  } catch (e) {
+    console.error("Error getting data:", e);
+    return {
+      data: [],
+      totalCount: 0,
+      totalPages: 0,
+      currentPage: page
+    };
+  }
+}
 
 export async function get(id) {
   try{
@@ -89,4 +117,4 @@ export async function put(id, item) {
   }
 }
 
-export default {getAll, get, deleteById, post, put};
+export default {getAll, get, deleteById, post, put, getPage};
