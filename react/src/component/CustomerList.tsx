@@ -58,7 +58,15 @@ const CustomerList: React.FC = () => {
     return (
         <>
             <h2>Customer List (Page {page} of {totalPages})</h2>
-
+            <button
+                style={{ width: '100%' }}
+                onClick={() => {
+                    localStorage.removeItem("loggedUser");
+                    navigate("/login");
+                }}
+            >
+                Logout
+            </button>
             <div className="search-bar">
                 <input
                     type="text"
