@@ -64,7 +64,7 @@ const CustomerList: React.FC = () => {
                     type="text"
                     placeholder="Search by name or email"
                     value={search}
-                    onChange={e => setSearch(e.target.value)}
+                    onChange={e => {setSearch(e.target.value); setPage(1);}}
                     style={{ padding: "0.5rem", width: "100%" }}
                 />
 
