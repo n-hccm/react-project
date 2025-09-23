@@ -1,14 +1,21 @@
-import './App.css'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import CustomerList from "./component/CustomerList";
+import EditPage from "./page/EditPage";
 
-import CustomerList from './component/CustomerList'
+import './App.css';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <>
-    <CustomerList/>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<CustomerList />} />
+        <Route path="/edit/:id" element={<EditPage />} />
+        <Route path="/new" element={<EditPage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
+

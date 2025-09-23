@@ -14,9 +14,9 @@ export async function getAll(){
     return [];
   }
 }
-export async function getPage(page = 1, size = 10) {
+export async function getPage(page = 1, size = 10, search="") {
   try {
-    const url = `${rest_url}?_page=${page}&_limit=${size}`;
+    const url = `${rest_url}?_page=${page}&_limit=${size}&q=${search}`;
 
     const res = await fetch(url);
     if (res.ok) {

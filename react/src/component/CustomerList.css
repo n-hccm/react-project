@@ -1,0 +1,143 @@
+h2 {
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+/* Search bar styles */
+.search-bar {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.search-bar input {
+    padding: 0.5rem;
+    flex: 1;
+}
+
+.btn-clear {
+    background-color: gray;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    cursor: pointer;
+}
+
+/* Table container for responsive scroll */
+.table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    cursor: auto;
+}
+
+/* Edit button */
+.edit-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Pagination controls */
+.pagination-controls {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.pagination-controls input[type="number"] {
+    width: 60px;
+    margin-left: 0.5rem;
+}
+
+/* Floating action button */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #76a9df;
+    color: white;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 0;
+}
+
+/* Hover Effects */
+
+/* Botón de limpiar */
+.btn-clear:hover {
+    background-color: #5a5a5a;
+}
+
+/* Filas de la tabla */
+table tbody tr:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+/* Botón de editar */
+.edit-button:hover {
+    color: #007bff;
+    transform: scale(1.1);
+}
+
+/* Botones de paginación */
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+/* Botón flotante */
+.fab:hover {
+    background-color: #5b8bc6;
+    transform: scale(1.05);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .search-bar {
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+    .search-bar button {
+        width: 45%;
+    }
+
+    .pagination-controls {
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+    }
+
+    .fab {
+        height: 50px;
+        font-size: 20px;
+        position: relative;
+        border-radius: 5px;
+        box-shadow: none;
+        bottom: 0;
+        right: 0;
+    }
+}

@@ -49,8 +49,7 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onC
 
     return (
         <div>
-            <h2>Customer Record</h2>
-            <h3>{title}</h3>
+            <h2>{title}</h2>
             <div>
                 <input type="text" name={"name"} value={formObject.name} placeholder="Name" onChange={(e) => changeHandler(e)} />
                 <input type="email" name={"email"} value={formObject.email} placeholder="Email" onChange={(e) => changeHandler(e)} />
@@ -78,11 +77,11 @@ const CustomerRecord: React.FC<CustomerRecordProps> = ({ customer, onDelete, onC
                         )}
                     </button>
                 </div>
-                <div>
-                    {!isNewCustomer ? <input className="btn-delete" type="button" value="delete" onClick={() => deleteSelected()} /> : null}
+                <div style={{ display: "flex", justifyContent: "space-around"}}>
+                    {!isNewCustomer ? <input className="btn-delete" type="button" value="Delete" onClick={() => deleteSelected()} /> : null}
                     
-                    <input className="btn-save" type="button" value="save" onClick={() => saveSelected()} />
-                    <input className="btn-cancel" type="button" value="cancel" onClick={() => cancelSelected()} />
+                    <input className="btn-save" type="button" value="Save" onClick={() => saveSelected()} />
+                    <input className="btn-cancel" type="button" value="Cancel" onClick={() => cancelSelected()} />
                 </div>
             </div>
         </div>

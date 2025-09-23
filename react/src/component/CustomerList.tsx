@@ -1,58 +1,30 @@
-
 import React from "react";
-import type { Customer } from "../types/Customer";
-import CustomerRecord from './CustomerRecord';
+import { useNavigate } from "react-router-dom";
 import * as memdb from '../../memory/memdb';
-
-const customerDefault: Customer = {
-    id: -1,
-    name: "",
-    email: "",
-    password: ""
-};
+import './CustomerList.css'; // 👈 Importa los estilos
 
 const PAGE_SIZE = 5;
 
 const CustomerList: React.FC = () => {
     const [data, setData] = React.useState<any[]>([]);
-    const [selectedCustomer, setSelectedCustomer] = React.useState<Customer>(customerDefault);
     const [page, setPage] = React.useState(1);
     const [inputPage, setInputPage] = React.useState("1");
     const [totalPages, setTotalPages] = React.useState(1);
-        const [search, setSearch] = React.useState("");
-    const [appliedSearch, setAppliedSearch] = React.useState("");
+    const [search, setSearch] = React.useState("");
+
+    const navigate = useNavigate();
 
     const fetchPage = async (pageNum: number) => {
-        const result = await memdb.getPage(pageNum, PAGE_SIZE);
+        const result = await memdb.getPage(pageNum, PAGE_SIZE, search.toLowerCase());
         setData(result.data);
         setPage(result.currentPage);
         setInputPage(result.currentPage.toString());
         setTotalPages(result.totalPages);
     };
-  
+
     React.useEffect(() => {
         fetchPage(page);
-    }, [page]);
-
-    const handleDeleteCustomer = async (id: number) => {
-        await memdb.deleteById(id);
-        fetchPage(page);
-        setSelectedCustomer(customerDefault);
-    };
-
-    const handleSaveCustomer = async (customer: Customer) => {
-        if (customer.id === -1) {
-            await memdb.post(customer);
-        } else {
-            await memdb.put(customer.id, customer);
-        }
-        fetchPage(page);
-        setSelectedCustomer(customerDefault);
-    };
-
-    const handleSelectCustomer = (customer: Customer) => {
-        setSelectedCustomer(prev => (prev?.id === customer.id ? customerDefault : customer));
-    };
+    }, [page, search]);
 
     const handlePrevPage = () => {
         if (page > 1) setPage(page - 1);
@@ -83,88 +55,77 @@ const CustomerList: React.FC = () => {
         handleInputSubmit();
     };
 
-    const filteredData = appliedSearch
-        ? data.filter(
-            (customer) =>
-                customer.name.toLowerCase().includes(appliedSearch.toLowerCase()) ||
-                customer.email.toLowerCase().includes(appliedSearch.toLowerCase())
-        )
-        : data;
-
     return (
         <>
-            <div>
-                <h2>Customer List (Página {page} de {totalPages})</h2>
-                <div style={{ marginBottom: "1rem" }}>
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o email"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        style={{ padding: "0.5rem", width: "60%" }}
-                    />
-                    <button onClick={() => setAppliedSearch(search)} style={{ marginLeft: 8, backgroundColor: "blue", color: "white" }}>Buscar</button>
-                    <button onClick={() => { setAppliedSearch(""); setSearch(""); }} style={{ marginLeft: 8, backgroundColor: "gray", color: "white" }}>Limpiar</button>
-                </div>
+            <h2>Customer List (Page {page} of {totalPages})</h2>
+
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="Search by name or email"
+                    value={search}
+                    onChange={e => { setSearch(e.target.value); setPage(1); }}
+                />
+                <button className="btn-clear" onClick={() => { setSearch(""); fetchPage(page); }}>
+                    Clear
+                </button>
+                <button
+                    onClick={() => navigate("/new")}
+                    className="fab"
+                    title="Add Customer"
+                >
+                    ➕
+                </button>
+            </div>
+
+            <div className="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Select</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Password</th>
+                            <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.map((customer) => (
-                            <tr
-                                key={customer.id}
-                                style={{
-                                    fontWeight: selectedCustomer.id === customer.id ? "bold" : "normal"
-                                }}
-                            >
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedCustomer.id === customer.id}
-                                        onChange={() => handleSelectCustomer(customer)}
-                                    />
-                                </td>
+                        {data.map((customer) => (
+                            <tr key={customer.id}>
                                 <td>{customer.name}</td>
                                 <td>{customer.email}</td>
-                                <td>{customer.password}</td>
+                                <td>
+                                    <button
+                                        onClick={() => navigate(`/edit/${customer.id}`)}
+                                        className="edit-button"
+                                        title="Edit"
+                                    >
+                                        ✏️
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-
-                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'center' }}>
-                    <button onClick={handlePrevPage} disabled={page === 1}>Anterior</button>
-
-                    <label>
-                        Página:
-                        <input
-                            type="number"
-                            value={inputPage}
-                            onChange={handleInputChange}
-                            onKeyDown={handleInputKeyDown}
-                            onBlur={handleInputBlur}
-                            min={1}
-                            max={totalPages}
-                            style={{ width: '60px', marginLeft: '0.5rem' }}
-                        />
-                        <span> / {totalPages}</span>
-                    </label>
-
-                    <button onClick={handleNextPage} disabled={page === totalPages}>Siguiente</button>
-                </div>
             </div>
-            <CustomerRecord
-                customer={selectedCustomer ?? customerDefault}
-                onDelete={handleDeleteCustomer}
-                onCancel={() => setSelectedCustomer(customerDefault)}
-                onSave={handleSaveCustomer}
-            />
+
+            <div className="pagination-controls">
+                <button onClick={handlePrevPage} disabled={page === 1}>Prev</button>
+
+                <label>
+                    Page:
+                    <input
+                        type="number"
+                        value={inputPage}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputKeyDown}
+                        onBlur={handleInputBlur}
+                        min={1}
+                        max={totalPages}
+                    />
+                    <span> / {totalPages}</span>
+                </label>
+
+                <button onClick={handleNextPage} disabled={page === totalPages}>Next</button>
+            </div>
         </>
     );
 };
