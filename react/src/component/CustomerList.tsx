@@ -94,7 +94,6 @@ const CustomerList: React.FC = () => {
                                 >✏️
                                 </button>
                             </td>
-
                         </tr>
                     ))}
                 </tbody>
@@ -120,6 +119,29 @@ const CustomerList: React.FC = () => {
 
                 <button onClick={handleNextPage} disabled={page === totalPages}>Next</button>
             </div>
+
+            <button
+                onClick={() => navigate("/new")}
+                style={{
+                    position: "fixed",
+                    bottom: "2rem",
+                    right: "2rem",
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "50%",
+                    backgroundColor: "#76a9df",
+                    color: "white",
+                    fontSize: "24px",
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.2)",
+                    padding: 0,
+                }}
+                title="Add Customer"
+            >
+                ➕
+            </button>
+
         </>
     );
 };

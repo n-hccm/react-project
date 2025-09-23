@@ -11,6 +11,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<CustomerList />} />
         <Route path="/edit/:id" element={<EditPage />} />
+        <Route path="/new" element={<EditPage />} />
       </Routes>
     </Router>
   );

@@ -5987,6 +5987,12 @@
       "email": "wasadmin",
       "password": "wasadmin",
       "id": 1001
+    },
+    {
+      "name": "Aitor",
+      "email": "wasadmin",
+      "password": "wasadmin",
+      "id": 1002
     }
   ]
 }
