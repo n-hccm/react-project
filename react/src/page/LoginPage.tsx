@@ -39,6 +39,7 @@ const LoginPage: React.FC = () => {
         style={{ display: "block", marginBottom: "1rem" }}
       />
       <button onClick={handleLogin}>Login</button>
+      <button onClick={() => {navigate("/")}}>Go Back</button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );

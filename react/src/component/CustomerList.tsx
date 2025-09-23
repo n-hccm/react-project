@@ -11,6 +11,8 @@ const CustomerList: React.FC = () => {
     const [inputPage, setInputPage] = React.useState("1");
     const [totalPages, setTotalPages] = React.useState(1);
     const [search, setSearch] = React.useState("");
+        const [isLoggedIn, setIsLoggedIn] = React.useState(!!localStorage.getItem("loggedUser"));
+
 
     const navigate = useNavigate();
 
@@ -55,18 +57,23 @@ const CustomerList: React.FC = () => {
         handleInputSubmit();
     };
 
+    const handleAuthToggle = () => {
+        if (isLoggedIn) {
+            localStorage.removeItem("loggedUser");
+            setIsLoggedIn(false);
+        } else {
+            navigate("/login");
+        }
+    };
+
     return (
         <>
-            <h2>Customer List (Page {page} of {totalPages})</h2>
-            <button
-                style={{ width: '100%' }}
-                onClick={() => {
-                    localStorage.removeItem("loggedUser");
-                    navigate("/login");
-                }}
-            >
-                Logout
-            </button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2>Customer List (Page {page} of {totalPages})</h2>
+                <button onClick={handleAuthToggle}>
+                    {isLoggedIn ? "Logout" : "Login"}
+                </button>
+            </div>
             <div className="search-bar">
                 <input
                     type="text"
