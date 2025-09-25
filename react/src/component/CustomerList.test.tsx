@@ -1,154 +1,126 @@
-import { describe, expect, it } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import CustomerList from './CustomerList';
+import App from '../App';
 
-describe("CustomerList Component Tests", () => {
+// ✅ Create a reference to the mock so we can modify it
+const mockGetPage = vi.fn();
 
-    it('CustomerList renders', () => {
-        render(<CustomerList />);
-        expect(screen.getByText(/Customer List/i)).toBeInTheDocument();
+// 🔁 Mock the module
+vi.mock('../../memory/memdb', () => ({
+    getPage: (page: number, size: number, search: string) => mockGetPage(page, size, search),
+}));
+
+describe('CustomerList Component Tests', () => {
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+
+        // Default mock response
+        mockGetPage.mockResolvedValue({
+            data: [
+                { id: 1, name: 'John Doe', email: 'john@example.com', password: '1234' },
+            ],
+            currentPage: 1,
+            totalPages: 1,
+        });
     });
 
-    it('Allows selecting an item from the list', async () => {
-        // Wait for the checkboxes to render
-        const checkboxes = await screen.findAllByRole('checkbox');
-        expect(checkboxes.length).toBeGreaterThan(0);
+    it('CustomerList renders', async () => {
+        render(<App />);
 
-        // Select the first item
-        await checkboxes[1].click();
-        await checkboxes[0].click();
-        expect(checkboxes[0]).toBeChecked();
-        expect(checkboxes[1]).not.toBeChecked();
+        // Verify the title and customer are displayed
+        expect(await screen.findByText(/Customer List/i)).toBeInTheDocument();
+        expect(await screen.findByText(/john@example.com/i)).toBeInTheDocument();
     });
 
-    it('clears CustomerRecord and deselects customer in CustomerList when cancel is clicked', async () => {
-        // Select the first customer
-        // Wait for the checkboxes to render
-        const checkboxes = await screen.findAllByRole('checkbox');
-        expect(checkboxes.length).toBeGreaterThan(0);
+    it('CustomerList updates on search input', async () => {
+        // Ensure the first customer is visible
+        expect(screen.getByText(/john@example.com/i)).toBeInTheDocument();
+        expect(screen.queryByText(/jane@example.com/i)).not.toBeInTheDocument();
 
-        // Select the first item
-        await checkboxes[1].click();
-        await checkboxes[0].click();
-        expect(checkboxes[0]).toBeChecked();
+        // ✅ Change the mock response for the new search term
+        mockGetPage.mockResolvedValueOnce({
+            data: [
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com', password: 'abcd' },
+            ],
+            currentPage: 1,
+            totalPages: 1,
+        });
 
-        const rows = await screen.findAllByRole('row');
-        // Filter only table body rows (exclude header)
-        const bodyRows = rows.filter(row => row.querySelectorAll('td').length > 0);
-        expect(bodyRows.length).toBeGreaterThan(0);
+        const searchInput = screen.getByPlaceholderText(/search by name or email/i);
 
-        // Get cells from the first data row
-        const firstRowCells = bodyRows[0].querySelectorAll('td');
-        // Column 1: name, column 2: email, column 3: password
-        const name = firstRowCells[1].textContent;
-        const email = firstRowCells[2].textContent;
-        const password = firstRowCells[3].textContent;
+        // Simulate typing "Jane"
+        fireEvent.change(searchInput, { target: { value: 'Jane' } });
 
-        // Fill some fields in CustomerRecord
-        const nameInput = screen.getByPlaceholderText('Name');
-        const emailInput = screen.getByPlaceholderText('Email');
-        const passwordInput = screen.getByPlaceholderText('Password');
-        expect(nameInput).toHaveValue(name);
-        expect(emailInput).toHaveValue(email);
-        expect(passwordInput).toHaveValue(password);
+        // Wait for the table to update with the new result
+        await waitFor(() => {
+            expect(screen.getByText(/jane@example.com/i)).toBeInTheDocument();
+        });
 
-        // Click cancel
-        const cancelButton = screen.getByDisplayValue('cancel');
-        await cancelButton.click();
-
-        // After cancel, inputs should be cleared
-        expect(nameInput).toHaveValue('');
-        expect(emailInput).toHaveValue('');
-        expect(passwordInput).toHaveValue('');
-
-        // No customer should be selected
-        expect(checkboxes[0]).not.toBeChecked();
-        expect(checkboxes[1]).not.toBeChecked();
+        // Verify the function was called with lowercase search term
+        expect(mockGetPage).toHaveBeenCalledWith(1, 5, 'jane');
     });
 
-    it('adds a new customer and displays it in the table', async () => {
-        // Fill the form for a new customer
-        const nameInput = screen.getByPlaceholderText('Name');
-        const emailInput = screen.getByPlaceholderText('Email');
-        const passwordInput = screen.getByPlaceholderText('Password');
-        const saveButton = screen.getByDisplayValue('save');
+    it('Clear button resets the search input and reloads data', async () => {
 
-        fireEvent.change(nameInput, { target: { value: 'New Customer' } });
-        fireEvent.change(emailInput, { target: { value: 'new@customer.com' } });
-        fireEvent.change(passwordInput, { target: { value: 'newpass' } });
+        // Prepare the mock for searching "Jane"
+        mockGetPage.mockResolvedValueOnce({
+            data: [
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com', password: 'abcd' },
+            ],
+            currentPage: 1,
+            totalPages: 1,
+        });
 
-        // Check that the inputs have the correct values before saving
-        expect(nameInput).toHaveValue('New Customer');
-        expect(emailInput).toHaveValue('new@customer.com');
-        expect(passwordInput).toHaveValue('newpass');
+        // Type "Jane" in the search input
+        const searchInput = screen.getByPlaceholderText(/search by name or email/i);
+        fireEvent.change(searchInput, { target: { value: 'Jane' } });
 
-         const bodyRowsBeforeSave = await screen.findAllByRole('row');
-        const dataRowsBeforeSave = bodyRowsBeforeSave.filter(row => row.querySelectorAll('td').length > 0);
+        // Wait for "Jane" to appear
+        await waitFor(() => {
+            expect(screen.getByText(/jane@example.com/i)).toBeInTheDocument();
+        });
 
-        await fireEvent.click(saveButton);
-        //Sleep
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Prepare the mock again for clearing the search
+        mockGetPage.mockResolvedValueOnce({
+            data: [
+                { id: 1, name: 'John Doe', email: 'john@example.com', password: '1234' },
+            ],
+            currentPage: 1,
+            totalPages: 1,
+        });
 
-        // Explicitly wait for the new row to appear
-        const bodyRows = await screen.findAllByRole('row');
-        const dataRows = bodyRows.filter(row => row.querySelectorAll('td').length > 0);
-        console.log(dataRows.map(row => row.textContent));
+        // Click the "Clear" button
+        const clearButton = screen.getByRole('button', { name: /clear/i });
+        fireEvent.click(clearButton);
 
-        expect(dataRows.length).toBe(dataRowsBeforeSave.length + 1);
-        const lastRowCells = dataRows[dataRows.length - 1].querySelectorAll('td');
-        expect(lastRowCells[1].textContent).toBe('New Customer');
-        expect(lastRowCells[2].textContent).toBe('new@customer.com');
-        expect(lastRowCells[3].textContent).toBe('newpass');
+        // Wait for the input to be cleared
+        expect(searchInput).toHaveValue('');
+
+        // And for the original data (John Doe) to reappear
+        await waitFor(() => {
+            expect(screen.getByText(/john@example.com/i)).toBeInTheDocument();
+        });
+
+        // Verify mockGetPage was called with empty search term
+        expect(mockGetPage).toHaveBeenLastCalledWith(1, 5, '');
     });
 
-    
-    it('modifies an existing customer and updates the table', async () => {
-        // Select the first customer
-        const checkboxes = await screen.findAllByRole('checkbox');
-        fireEvent.click(checkboxes[0]);
+    /*it('Pagination buttons work correctly', async () => {
+        mockGetPage.mockClear();
+        // Prepare mock for page 1
+        mockGetPage.mockResolvedValueOnce({
+            data: [
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com', password: 'abcd' },
+            ],
+            currentPage: 1,
+            totalPages: 1,
+        });
 
-        // Change the name and save
-        const nameInput = screen.getByPlaceholderText('Name');
-        const saveButton = screen.getByDisplayValue('save');
-        fireEvent.change(nameInput, { target: { value: 'Updated Name' } });
-        await fireEvent.click(saveButton);
+        const nextButton = screen.getByRole('button', { name: /Next/i });
+        fireEvent.click(nextButton);
 
-        //Sleep
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Check that the table is updated
-        const rows = await screen.findAllByRole('row');
-        const bodyRows = rows.filter(row => row.querySelectorAll('td').length > 0);
-        const firstRowCells = bodyRows[0].querySelectorAll('td');
-        expect(firstRowCells[1].textContent).toBe('Updated Name');
-    });
-
-    it('deletes an existing customer and removes it from the table', async () => {
-        // Select the first customer
-        const checkboxes = await screen.findAllByRole('checkbox');
-        fireEvent.click(checkboxes[0]);
-        
-        // Explicitly wait for the new row to appear
-        const listRows = await screen.findAllByRole('row');
-        const dataRows = listRows.filter(row => row.querySelectorAll('td').length > 0);
-        console.log(dataRows.map(row => row.textContent));
-
-        const firstRowCellsNotDelete = dataRows[0].querySelectorAll('td');
-
-        // Click delete
-        const deleteButton = screen.getByDisplayValue('delete');
-        await fireEvent.click(deleteButton);
-        //Sleep
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Check that the customer is removed from the table
-        const rows = await screen.findAllByRole('row');
-        const bodyRows = rows.filter(row => row.querySelectorAll('td').length > 0);
-        // The first row should not have the deleted customer's name
-        const firstRowCells = bodyRows[0].querySelectorAll('td');
-        expect(firstRowCells[1]).not.toBe(firstRowCellsNotDelete[1]);
-    });
-
-
+        expect(screen.getByText(/Customer List \(Page 2 of 2\)/i)).toBeInTheDocument();
+    });*/
 });

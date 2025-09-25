@@ -2,7 +2,7 @@
   "customers": [
     {
       "id": 1,
-      "name": "Lena",
+      "name": "Lena aitor",
       "email": "lrentoul0@bbc.co.uk",
       "password": "pJ2+t(84pOZ3lVt"
     },
@@ -10,25 +10,13 @@
       "id": 2,
       "name": "Michail",
       "email": "mkubelka1@nytimes.com",
-      "password": "bN0|}ldY'}Ea\"2"
+      "password": "123"
     },
     {
       "id": 3,
-      "name": "Aitor",
+      "name": "Aitor AR",
       "email": "apopelay2@friendfeed.com",
       "password": "wD1)nmB*NV"
-    },
-    {
-      "id": 4,
-      "name": "Jamima",
-      "email": "jregi3@apple.com",
-      "password": "qZ0*A?2}2`{v"
-    },
-    {
-      "id": 5,
-      "name": "Drusy",
-      "email": "dmacallester4@behance.net",
-      "password": "aU4)0((>DQ\"m!%"
     },
     {
       "id": 6,
@@ -881,12 +869,6 @@
       "name": "Delcina",
       "email": "dswindon42@chronoengine.com",
       "password": "zN1|jfdG&%0A}2"
-    },
-    {
-      "id": 148,
-      "name": "Georgie",
-      "email": "ghumberston43@addthis.com",
-      "password": "iV7<oK5Gpx"
     },
     {
       "id": 149,
@@ -6005,6 +5987,18 @@
       "email": "wasadmin",
       "password": "wasadmin",
       "id": 1001
+    },
+    {
+      "name": "Aitor",
+      "email": "wasadmin",
+      "password": "wasadmin",
+      "id": 1002
+    },
+    {
+      "name": "Aitor",
+      "email": "aitor@gmail.com",
+      "password": "123",
+      "id": 1003
     }
   ]
 }
